@@ -5,6 +5,23 @@ import { useState } from "react";
 
 function App() {
   const [emails, setEmails] = useState(initialEmails);
+  const [checked, setChecked] = useState(false);
+
+  function toggleAttr(emailId, attr) {
+    setEmails(
+      emails.map((email) => {
+        if (email.id === emailId) {
+          return { ...email, [attr]: !email[attr] };
+        } else {
+          return email;
+        }
+      })
+    );
+  }
+
+  const emailsFiltered = checked
+    ? emails.filter((email) => email.read === false)
+    : emails;
 
   return (
     <div className="app">
@@ -31,21 +48,32 @@ function App() {
             <input
               id="hide-read"
               type="checkbox"
-              checked={false}
-              // onChange={() => {}}
+              checked={checked}
+              onChange={() => setChecked(!checked)}
             />
           </li>
         </ul>
       </nav>
 
       <main className="emails">
-        {emails.map((email, index) => (
-          <li className="email" key={index}>
+        {emailsFiltered.map((email) => (
+          <li
+            className={email.read ? "email read" : "email unread"}
+            key={email.id}
+          >
             <div className="select">
-              <input className="select-checkbox" type="checkbox" />
+              <input
+                className="select-checkbox"
+                type="checkbox"
+                onClick={() => toggleAttr(email.id, "read")}
+              />
             </div>
             <div className="star">
-              <input className="star-checkbox" type="checkbox" />
+              <input
+                className="star-checkbox"
+                type="checkbox"
+                onClick={() => toggleAttr(email.id, "starred")}
+              />
             </div>
             <div className="sender">{email.sender}</div>
             <div className="title">{email.title}</div>
