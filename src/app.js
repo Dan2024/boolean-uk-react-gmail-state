@@ -6,6 +6,7 @@ import { useState } from "react";
 function App() {
   const [emails, setEmails] = useState(initialEmails);
   const [checked, setChecked] = useState(false);
+  const [currentTab, setCurrentTab] = useState("inbox");
 
   function toggleAttr(emailId, attr) {
     setEmails(
@@ -19,9 +20,15 @@ function App() {
     );
   }
 
-  const emailsFiltered = checked
+  const emailsFilteredByRead = checked
     ? emails.filter((email) => email.read === false)
     : emails;
+
+  function getStarredEmails(emails) {
+    return currentTab === "starred"
+      ? emails.filter((email) => email.starred === true)
+      : emails;
+  }
 
   return (
     <div className="app">
@@ -29,15 +36,15 @@ function App() {
       <nav className="left-menu">
         <ul className="inbox-list">
           <li
-            className="item active"
-            // onClick={() => {}}
+            className={currentTab === "inbox" ? "item active" : "item"}
+            onClick={() => setCurrentTab("inbox")}
           >
             <span className="label">Inbox</span>
-            <span className="count">?</span>
+            <span className="count">{emails.length}</span>
           </li>
           <li
-            className="item"
-            // onClick={() => {}}
+            className={currentTab === "starred" ? "item active" : "item"}
+            onClick={() => setCurrentTab("starred")}
           >
             <span className="label">Starred</span>
             <span className="count">?</span>
@@ -56,7 +63,7 @@ function App() {
       </nav>
 
       <main className="emails">
-        {emailsFiltered.map((email) => (
+        {getStarredEmails(emailsFilteredByRead).map((email) => (
           <li
             className={email.read ? "email read" : "email unread"}
             key={email.id}
